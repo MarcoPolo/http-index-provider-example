@@ -1,5 +1,5 @@
 [package]
-name = "http-provider-reference"
+name = "http-index-provider-example"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,3 +12,17 @@ serde = "1.0.133"
 serde_json = "1.0.74"
 serde_with = {version = "1.11.0", features = ["base64"]}
 base64 = "0.13.0"
+tide = "0.16.0"
+async-std = {version = "1.10.0", features = ["attributes"]}
+ipld_blockstore = "0.1"
+forest_ipld = "0.1"
+forest_cid = "0.3"
+forest_db = "0.1"
+forest_encoding = "0.2"
+multihash = {version = "0.13", features = ["identity"]}
+generic-array = "0.14"
+rand = "0.8.4"
+thiserror = "1.0.30"
+
+[dev-dependencies]
+tide-testing = "0.1"

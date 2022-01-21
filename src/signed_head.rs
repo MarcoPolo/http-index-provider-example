@@ -1,4 +1,5 @@
-use cid::Cid;
+use forest_cid as cid;
+use forest_cid::Cid;
 use libp2p::{
     core::{identity::Keypair, PublicKey},
     identity::error::SigningError,
@@ -6,6 +7,7 @@ use libp2p::{
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
 use serde_with::serde_as;
+use thiserror::Error;
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
@@ -18,9 +20,11 @@ pub struct SignedHead {
     pubkey: Vec<u8>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum SignedHeadError {
+    #[error("Invalid signature")]
     InvalidSignature,
+    #[error("Invalid public key")]
     InvalidPublicKey,
 }
 
@@ -47,7 +51,6 @@ impl SignedHead {
 }
 
 serde_with::serde_conv!(BytesAsMap, Vec<u8>, from_bytes_to_map, from_map_to_bytes);
-
 fn from_bytes_to_map(bytes: &Vec<u8>) -> Map<String, serde_json::Value> {
     let mut m = Map::new();
     let mut bytes_map = Map::new();
@@ -71,7 +74,6 @@ fn from_map_to_bytes(
 }
 
 serde_with::serde_conv!(CidAsMap, Cid, from_cid_to_map, from_map_to_cid);
-
 fn from_cid_to_map(cid: &Cid) -> serde_json::Map<String, serde_json::Value> {
     let mut map = Map::new();
     map.insert("/".to_string(), cid.to_string().into());
@@ -90,7 +92,9 @@ fn from_map_to_cid(value: serde_json::Map<String, serde_json::Value>) -> Result<
             std::io::ErrorKind::InvalidData,
             "Cid str is missing",
         )))?;
+
     let cid = Cid::try_from(cid_str)?;
+
     Ok(cid)
 }
 
