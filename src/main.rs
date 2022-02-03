@@ -80,11 +80,12 @@ async fn add_chunk<BS: BlockStore>(mut r: tide::Request<Provider<BS>>) -> tide::
 async fn publish_ad<BS: BlockStore>(r: tide::Request<Provider<BS>>) -> tide::Result<String> {
     let id: i64 = r.param("id")?.parse()?;
     let mut head = r.state().head.write().await;
+    let keypair = r.state().keypair.as_ref().clone();
     let current_head = head.take();
     let mut temp_ads = r.state().temp_ads.write().await;
     if let Some(ad_builder) = temp_ads.remove(&id) {
         let bs = r.state().blockstore.write().await;
-        let mut ad = ad_builder.build();
+        let mut ad = ad_builder.build(keypair)?;
         ad.PreviousID = current_head.map(|h| forest_ipld::Ipld::Link(h));
         let ipld_node = forest_ipld::to_ipld(ad)?;
 
