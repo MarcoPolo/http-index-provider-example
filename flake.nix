@@ -16,6 +16,7 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = [
+            pkgs.go
             rustStable
           ] ++ (if (system == "aarch64-darwin" || system == "x86_64-darwin") then [
             pkgs.darwin.apple_sdk.frameworks.Security

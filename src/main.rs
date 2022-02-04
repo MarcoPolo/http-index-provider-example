@@ -142,6 +142,9 @@ fn main() -> Result<(), std::io::Error> {
         admin_app.at("/adv/:id/entryChunk").post(add_chunk);
         admin_app.at("/adv/:id/publish").post(publish_ad);
 
+        let publisher_id = libp2p::PeerId::from_public_key(&provider.keypair.public()).to_base58();
+        println!("Publisher id: {}", publisher_id);
+
         let (app_res, admin_res) =
             join(app.listen("0.0.0.0:8070"), admin_app.listen("0.0.0.0:8071")).await;
         app_res.expect("failed to start server");

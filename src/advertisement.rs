@@ -17,6 +17,7 @@ const AD_SIGNATURE_DOMAIN: &'static str = "indexer";
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Advertisement {
     /// CID of the Previous advertisement
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub PreviousID: Option<ipld::Ipld>,
     /// Provider ID of the advertisement.
     pub Provider: String,
@@ -25,7 +26,7 @@ pub struct Advertisement {
     /// Advertisement signature.
     pub Signature: ipld::Ipld,
     /// Entries with a link to the list of CIDs
-    pub Entries: Option<ipld::Ipld>,
+    pub Entries: Option<ipld::Ipld>, // TODO this shouldn't be an option, we should use the NoEntries value.
     /// Context ID for entries.
     pub ContextID: ipld::Ipld,
     /// Serialized v0.Metadata for all entries in advertisement.
@@ -105,6 +106,8 @@ impl Advertisement {
             Err(AdSigError::PayloadDidNotMatch)?;
         }
 
+        // TODO verify the signer matches the peer id of the provider
+
         Ok(())
     }
 }
@@ -158,6 +161,7 @@ impl AdvertisementBuilder {
 pub struct EntryChunk {
     // A vec of multihashes represented as Ipld::Bytes
     pub Entries: Vec<Ipld>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub Next: Option<ipld::Ipld>,
 }
 
