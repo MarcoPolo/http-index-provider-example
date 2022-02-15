@@ -61,12 +61,8 @@ func main() {
 		noErr(err)
 	}
 
-	// idxReader.ForEach(f)
-
 	err = i.publishAd()
 	noErr(err)
-
-	fmt.Println("Hello, world", *carPath)
 }
 
 type importerHelper struct {
